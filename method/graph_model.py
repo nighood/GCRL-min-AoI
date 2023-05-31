@@ -102,7 +102,10 @@ class RGL(nn.Module):
             normalized_A = self.compute_similarity_matrix(X)
             self.A = normalized_A[0, :, :].data.cpu().numpy()  # total_num x total_num
 
-        next_H = H = X  # batch x total_num x embedding_dim
+        # next_H = H = X
+
+        H = X.contiguous().clone()
+        next_H = H.contiguous().clone()  # batch x total_num x embedding_dim
         for i in range(self.num_layer):  # 2
             if self.layerwise_graph:  # False
                 A = self.compute_similarity_matrix(H)
@@ -111,7 +114,8 @@ class RGL(nn.Module):
                 next_H = relu(torch.matmul(torch.matmul(normalized_A, H), self.Ws[i]))
 
             if self.skip_connection:
-                next_H += H
-            H = next_H
+                # next_H += H
+                next_H = next_H + H
+            H = next_H.contiguous().clone()
 
         return next_H

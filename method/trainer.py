@@ -2,6 +2,7 @@ import logging
 import abc
 import copy
 import torch
+torch.autograd.set_detect_anomaly(True)
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -78,7 +79,11 @@ class MPRLTrainer(object):
 
             # values = values.to(self.device)
             loss = self.criterion(outputs, target_values)
+            
+            # torch.autograd.profiler.emit_nvtx = True
             loss.backward()
+            # torch.autograd.profiler.emit_nvtx = False
+
             self.v_optimizer.step()
             v_losses += loss.data.item()
 

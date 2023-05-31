@@ -35,6 +35,9 @@ class CrowdSim(gym.Env):
         self.step_time = self.config.env.step_time
         self.start_timestamp = self.config.env.start_timestamp
         self.max_uav_energy = self.config.env.max_uav_energy
+        # seemed forget the action_space and obs_space?
+        # self.action_space = None
+        # self.observation_space = None
 
         # load_dataset
         self.nlon = self.config.env.nlon
@@ -262,7 +265,8 @@ class CrowdSim(gym.Env):
                         "timestamp": timestamp_list, "aoi": aoi_list, "energy": energy_list}
                 robot_df = pd.DataFrame(data)
                 robot_df['t'] = pd.to_datetime(robot_df['timestamp'], unit='s')  # s表示时间戳转换
-                mixed_df = mixed_df.append(robot_df)
+                # mixed_df = mixed_df.append(robot_df)
+                mixed_df = pd.concat([mixed_df,robot_df])
 
             # ------------------------------------------------------------------------------------
             # 建立moving pandas轨迹，也可以选择调用高级API继续清洗轨迹。
